@@ -1,25 +1,27 @@
-import { rest } from 'msw'
+import { HttpResponse, http } from 'msw'
 import { DateTime } from 'luxon'
 
 const slots = createSlots()
 
 export const handlers = [
-  rest.get('/slots', (req, res, ctx) => {
+  http.get('/slots', ({ request }) => {
+    const url = new URL(request.url)
+
     const filteredSlots = slots.filter(isAvailable).filter(slot => {
-      const day = req.url.searchParams.get('day')
+      const day = url.searchParams.get('day')
       return day ? slot.starts.startsWith(day) : true
     })
-    return res(ctx.json(filteredSlots))
+    return HttpResponse.json(filteredSlots)
   }),
 
-  rest.post('/slots/take', async (req, res, ctx) => {
-    const { starts } = await req.json<{ starts: string }>()
+  http.post('/slots/take', async ({ request }) => {
+    const { starts } = await request.json() as { starts: string }
     const slot = slots.find((slot) => starts === slot.starts)
     if (slot) {
       slot.taken = true
-      return res(ctx.json(slot))
+      return HttpResponse.json(slot)
     } else {
-      return res(ctx.status(404))
+      return new HttpResponse(null, { status: 404 })
     }
   }),
 ]

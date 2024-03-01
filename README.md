@@ -7,7 +7,7 @@ The tests are written with `vitest` (which has a `jest` compatible API) and `tes
 
 ## Quick start
 - Clone this repo
-- Install `node` 16
+- Install `node` 20
 - Install the dependencies,`npm i`
 
 You can run the dev server with `npm start`, run the tests once with `npm test`, and keep them running with `npm run tdd`.
